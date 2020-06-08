@@ -86,14 +86,23 @@ class Graph:
                 for neighbor in self.get_neighbors(v):
                     s.push(neighbor)
 
-    def dft_recursive(self, starting_vertex):
+    def dft_recursive(self, starting_vertex, visited=set()):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
 
         This should be done using recursion.
         """
-        pass  # TODO
+        # If that vertex has been visited...
+        if starting_vertex not in visited:
+            print(starting_vertex)
+            # Mark it as visited
+            visited.add(starting_vertex)
+
+            # Then push all of its neighbors onto the stack
+            for neighbor in self.get_neighbors(starting_vertex):
+                # s.push(neighbor)
+                self.dft_recursive(neighbor, visited)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -101,6 +110,39 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
+        # keep track of explored nodes
+        explored = []
+        # keep track of all the paths to be checked
+        queue = [[starting_vertex]]
+    
+        # return path if starting_vertex is destination_vertex
+        if starting_vertex == destination_vertex:
+            return "That was easy! The starting vertex is the destination vertex."
+    
+        # keeps looping until all possible paths have been checked
+        while queue:
+            # pop the first path from the queue
+            path = queue.pop(0)
+            # get the last node from the path
+            node = path[-1]
+            if node not in explored:
+                neighbours = self.vertices[node]
+                # go through all neighbour nodes, construct a new path and
+                # push it into the queue
+                for neighbour in neighbours:
+                    new_path = list(path)
+                    new_path.append(neighbour)
+                    queue.append(new_path)
+                    # return path if neighbour is destination_vertex
+                    if neighbour == destination_vertex:
+                        return new_path
+    
+                # mark node as explored
+                explored.append(node)
+    
+        # in case there's no path between the 2 nodes
+        return "So sorry, but a connecting path doesn't exist :("
+
 		# Create an empty queue and enqueue A PATH TO the starting vertex ID
 		# Create a Set to store visited vertices
 		# While the queue is not empty...
