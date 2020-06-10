@@ -50,17 +50,22 @@ class SocialGraph:
         fake = Faker()
         # Add users
         for _ in range(num_users):
+            # generate a random name
             name = fake.name()
             self.add_user(name)
 
         # Create friendships
-        # print('all users:', list(self.users.keys()))
         for user in self.users.keys():
             user1 = user
-            user2 = random.randint(1, user1)
+            # if it's not the first user
+            if user > 1:
+                # don't include themselves
+                user2 = random.randint(1, user1-1)
+            else:
+                # continue if you're going to friend yourself
+                continue
 
-            self.add_friendship(user1, user2)
-            
+            self.add_friendship(user1, user2)            
 
     def get_all_social_paths(self, user_id):
         """
