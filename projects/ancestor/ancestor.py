@@ -23,8 +23,9 @@ class Graph:
         """
         Add a vertex to the graph.
         """
-        self.vertices[vertex_id] = set()  # set of edges from this vert
-
+        if vertex_id not in self.vertices:
+            self.vertices[vertex_id] = set()  # set of edges from this vert
+            
     def add_edge(self, v1, v2):
         """
         Add a directed edge to the graph.
@@ -61,13 +62,11 @@ def earliest_ancestor(ancestors, starting_node):
     q = Queue()
     q.enqueue([starting_node])
 
-    # Create a Set to store visited vertices
-    visited = set()
+    max_path_len = 1
 
     earliest_anc = -1
 
-    max_len = 1
-
+    print('vertices:', graph.vertices)
     # While the queue is not empty...
     while q.size() > 0:
         # pop the first path from the queue
@@ -75,25 +74,18 @@ def earliest_ancestor(ancestors, starting_node):
         # get the last node from the path
         node = path[-1]
 
-        # If that vertex has not been visited...
-        if node not in visited:
-            # Visit it
-            print('current:', node)
+        if (len(path) >= max_path_len and node < earliest_anc) or (len(path) > max_path_len):
+            earliest_anc = node
+            max_path_len = len(path)
 
-            # Mark it as visited...
-            visited.add(node)
+        # Then add all of its neighbors to the back of the queue
+        for neighbor in graph.get_neighbors(node):
+            new_path = list(path)
+            new_path.append(neighbor)
+            q.enqueue(new_path)
 
-            # Then add all of its neighbors to the back of the queue
-            for neighbor in graph.get_neighbors(node):
-                print('neighbor', neighbor)
-                new_path = list(path)
-                new_path.append(neighbor)
-                max_len = len(new_path)
-                q.enqueue(new_path)
-            # if no neighbors
-            if graph.get_neighbors(node) == set():
-                print('path:', path)
-                # if node < earliest_anc:
-                earliest_anc = path[-1]
-    print('max length:', max_len)
     return earliest_anc
+
+test_ancestors = [(1, 3), (2, 3), (3, 6), (5, 6), (5, 7), (4, 5), (4, 8), (8, 9), (11, 8), (10, 1)]
+
+earliest_ancestor(test_ancestors, 3)

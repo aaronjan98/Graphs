@@ -1,3 +1,6 @@
+from faker import Faker
+import random
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -44,9 +47,20 @@ class SocialGraph:
         self.friendships = {}
         # !!!! IMPLEMENT ME
 
+        fake = Faker()
         # Add users
+        for _ in range(num_users):
+            name = fake.name()
+            self.add_user(name)
 
         # Create friendships
+        # print('all users:', list(self.users.keys()))
+        for user in self.users.keys():
+            user1 = user
+            user2 = random.randint(1, user1)
+
+            self.add_friendship(user1, user2)
+            
 
     def get_all_social_paths(self, user_id):
         """
