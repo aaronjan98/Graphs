@@ -59,10 +59,9 @@ class SocialGraph:
             user1 = user
             # if it's not the first user
             if user > 1:
-                # don't include themselves
+                # only create a friendships with a user ID less than themselves to prevent warnings
                 user2 = random.randint(1, user1-1)
             else:
-                # continue if you're going to friend yourself
                 continue
 
             self.add_friendship(user1, user2)            
@@ -78,8 +77,27 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
-        return visited
 
+        queue = [[user_id]]
+
+        # as long as there are extended friends this loop will run
+        while queue:
+            path = queue.pop(0)
+            # get the first user
+            cur_user = path[-1]
+
+            if cur_user not in visited:
+                visited.update({cur_user: path})
+                
+                # getting user's friends
+                extended_friends = self.friendships[cur_user]
+
+                for friend in extended_friends:
+                    new_path = list(path)
+                    new_path.append(friend)
+                    queue.append(new_path)        
+
+        return visited
 
 if __name__ == '__main__':
     sg = SocialGraph()
