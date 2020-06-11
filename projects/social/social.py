@@ -1,3 +1,6 @@
+from faker import Faker
+import random
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -6,7 +9,8 @@ class SocialGraph:
     def __init__(self):
         self.last_id = 0
         self.users = {}
-        self.friendships = {}
+        # self.friendships = {}
+        self.friendships = {1: {8, 10, 5}, 2: {10, 5, 7}, 3: {4}, 4: {9, 3}, 5: {8, 1, 2}, 6: {10}, 7: {2}, 8: {1, 5}, 9: {4}, 10: {1, 2, 6}}
 
     def add_friendship(self, user_id, friend_id):
         """
@@ -44,9 +48,24 @@ class SocialGraph:
         self.friendships = {}
         # !!!! IMPLEMENT ME
 
+        fake = Faker()
         # Add users
+        for _ in range(num_users):
+            # generate a random name
+            name = fake.name()
+            self.add_user(name)
 
         # Create friendships
+        for user in self.users.keys():
+            user1 = user
+            # if it's not the first user
+            if user > 1:
+                # only create a friendships with a user ID less than themselves to prevent warnings
+                user2 = random.randint(1, user1-1)
+            else:
+                continue
+
+            self.add_friendship(user1, user2)            
 
     def get_all_social_paths(self, user_id):
         """
@@ -59,12 +78,32 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
-        return visited
 
+        queue = [[user_id]]
+
+        # as long as there are extended friends this loop will run
+        while queue:
+            path = queue.pop(0)
+            # get the first user
+            cur_user = path[-1]
+
+            if cur_user not in visited:
+                visited.update({cur_user: path})
+                
+                # getting user's friends
+                extended_friends = self.friendships[cur_user]
+
+                for friend in extended_friends:
+                    new_path = list(path)
+                    new_path.append(friend)
+                    queue.append(new_path)        
+
+        return visited
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
+    # sg.populate_graph(10, 2)
     print(sg.friendships)
+    print('\n----------------------------------------------------------\n')
     connections = sg.get_all_social_paths(1)
     print(connections)
