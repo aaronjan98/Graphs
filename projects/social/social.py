@@ -9,7 +9,8 @@ class SocialGraph:
     def __init__(self):
         self.last_id = 0
         self.users = {}
-        self.friendships = {}
+        # self.friendships = {}
+        self.friendships = {1: {8, 10, 5}, 2: {10, 5, 7}, 3: {4}, 4: {9, 3}, 5: {8, 1, 2}, 6: {10}, 7: {2}, 8: {1, 5}, 9: {4}, 10: {1, 2, 6}}
 
     def add_friendship(self, user_id, friend_id):
         """
@@ -101,7 +102,7 @@ class SocialGraph:
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
+    # sg.populate_graph(10, 2)
     print(sg.friendships)
     print('\n----------------------------------------------------------\n')
     connections = sg.get_all_social_paths(1)
